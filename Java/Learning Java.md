@@ -168,7 +168,7 @@ var myArray = {1,2,3}
 > [!Caution]
 > A switch expression with integer or string operand must always have a default since it must yield a value no matter what the operand value is
 
-## Class
+# Class
 A class is a blueprint or template used to create objects. It define custom data type by grouping related data (instance variable) and behaviors(methods) into a single unit.
 ```
 class classname{
@@ -214,7 +214,8 @@ Box b1 = new Box() ;
 >[!Caution] 
 > ##### Working With `null` reference
 > If you apply a method to a `null` value a `NullPointerException` occurs. If the program does not "catch" an exception, it is terminated. 
-#### Call by Value Vs Call by Reference 
+
+## Call by Value Vs Call by Reference 
 **Primitive types are always passed by value .**
 ```java
 // Primitive types are passed by value.
@@ -278,7 +279,7 @@ For Return type same thing also thing happened ;
 >      . . . 
 > }
 > ```
-### Constructors 
+## Constructors 
 Constructor are just like a method that is invoke immediately upon creation. 
 - it has the same name as class 
 - it does not have any return type  not even void. 
@@ -313,7 +314,7 @@ return this.width * this.height * this.depth ;
 }
 ```
 
-### Method Overloading
+## Method Overloading
 In Java, it is possible to define two or mire methods within the same class that shared the same name, **as long as their parameter declarations are different.** It's called method overloading . it's one of the way to support polymorphism. 
 - Java use **type and/or number of arguments** to determine which version of method to actually call. 
 - **Return Type** of method is insufficient to distinguish two versions of a method
@@ -350,7 +351,7 @@ public class DemoOverloading {
 }
 ```
 
-### Constructors Overloading 
+## Constructors Overloading 
 Same like method overloading we can overload a constructor methods
 ```java
 class Box{
@@ -393,7 +394,7 @@ public static void main(){
 };
 ``` 
 
-### Access Modifier 
+## Access Modifier 
 
 | Access Modifier                  | `public` | `protected` | `default` | `private` |
 | -------------------------------- | -------- | ----------- | --------- | --------- |
@@ -401,7 +402,7 @@ public static void main(){
 | ***Same Package***               | ✅        | ✅           | ✅         | ❌         |
 | ***Subclass (Outside Package)*** | ✅        | ✅           | ❌         | ❌         |
 | ***Everywhare***                 | ✅        | ❌           | ❌         | ❌         |
-### Understanding `static` 
+## Understanding `static` 
 - **Static Fields:** If you define a fields with `static` keyword the field is not present in the objects of the class. Instead it will create only one single copy of each static field when the class is loaded. 
 - **Static Method:** Static Methods are methods that do not operate on objects. Static methods can access only all the static methods and static variables of this class. It can't access this or super keyword as it's does not belongs to the object/instance .
 - **Static Block:** Static Block are used to executed exactly once when the class is first loaded. In static block you can only access the static method and static variables of this class .
@@ -409,14 +410,14 @@ public static void main(){
 >[!NOTE]
 >In JVM class are loaded when first time we are accessing the class  (like for creating new objects or accessing static fields or methods)
 
-### `final` Keyword
+## `final` Keyword
 - **Final Field:** A field can be declared as `final` . Doing it prevents from being modified, making it essentially a constant. This means we must initialize a final field when it's declared. it can be done by two ways : 
 	1. initialize it when it's declared or 
 	2. assign it within constructor. 
 - **Final Methods:** A final methods can't be override by inherited class 
 - **Final Class:** A final class can't be inherited by other class 
 
-### Command-Line Arguments 
+## Command-Line Arguments 
 A command-line argument is the information that directly follows the program’s name on the command line when it is executed. To access the command-line arguments inside a Java program is quite easy—they are stored as strings in a String array passed to the args parameter of `main()` 
 Example :
 ```java
@@ -434,13 +435,14 @@ args[1]: is
 args[5]: -1
 ```
 
-### Variable Length Arguments 
+## Variable Length Arguments 
 Modern versions of Java include a feature that simplifies the creation of methods that need to take a variable number of arguments. This feature is called *varargs*, and it is short for variable-length arguments. A method that takes a variable number of arguments is called a *variable-arity method,* or simply a *varargs* *method*.
 In legacy code we used array as a arguments to passed variable length arguments. Nowadays we use `...` to specify the variable length 
 > [!Note]
 > 1. Remember The varargs parameter must be last. 
 > 2. There must be only one varargs parameter, the attempt to declare the second varargs parameter is illegal.
 > 3. You can also overload the varargs methods also.
->> [!Caution]
->>Overloading a varargs method can lead to a ambiguity also. as it's a possible to create ambiguous call to an overloaded varargs method.
+
+> [!Caution]
+>Overloading a varargs method can lead to a ambiguity also. as it's a possible to create ambiguous call to an overloaded varargs method.
 
