@@ -392,3 +392,55 @@ public static void main(){
 }
 };
 ``` 
+
+### Access Modifier 
+
+| Access Modifier                  | `public` | `protected` | `default` | `private` |
+| -------------------------------- | -------- | ----------- | --------- | --------- |
+| ***within Class***               | ✅        | ✅           | ✅         | ✅         |
+| ***Same Package***               | ✅        | ✅           | ✅         | ❌         |
+| ***Subclass (Outside Package)*** | ✅        | ✅           | ❌         | ❌         |
+| ***Everywhare***                 | ✅        | ❌           | ❌         | ❌         |
+### Understanding `static` 
+- **Static Fields:** If you define a fields with `static` keyword the field is not present in the objects of the class. Instead it will create only one single copy of each static field when the class is loaded. 
+- **Static Method:** Static Methods are methods that do not operate on objects. Static methods can access only all the static methods and static variables of this class. It can't access this or super keyword as it's does not belongs to the object/instance .
+- **Static Block:** Static Block are used to executed exactly once when the class is first loaded. In static block you can only access the static method and static variables of this class .
+
+>[!NOTE]
+>In JVM class are loaded when first time we are accessing the class  (like for creating new objects or accessing static fields or methods)
+
+### `final` Keyword
+- **Final Field:** A field can be declared as `final` . Doing it prevents from being modified, making it essentially a constant. This means we must initialize a final field when it's declared. it can be done by two ways : 
+	1. initialize it when it's declared or 
+	2. assign it within constructor. 
+- **Final Methods:** A final methods can't be override by inherited class 
+- **Final Class:** A final class can't be inherited by other class 
+
+### Command-Line Arguments 
+A command-line argument is the information that directly follows the program’s name on the command line when it is executed. To access the command-line arguments inside a Java program is quite easy—they are stored as strings in a String array passed to the args parameter of `main()` 
+Example :
+```java
+class CommandLine{
+	public static void main(String[] args){
+		for(int i = 0 ; i < args.length ; i++)
+		System.out.printf("args[%d]:\t%s\n" , i,args[i]) ;
+	}
+}
+/* java CommandLine This is a test 100 -1
+output : 
+args[0]: This
+args[1]: is 
+...
+args[5]: -1
+```
+
+### Variable Length Arguments 
+Modern versions of Java include a feature that simplifies the creation of methods that need to take a variable number of arguments. This feature is called *varargs*, and it is short for variable-length arguments. A method that takes a variable number of arguments is called a *variable-arity method,* or simply a *varargs* *method*.
+In legacy code we used array as a arguments to passed variable length arguments. Nowadays we use `...` to specify the variable length 
+> [!Note]
+> 1. Remember The varargs parameter must be last. 
+> 2. There must be only one varargs parameter, the attempt to declare the second varargs parameter is illegal.
+> 3. You can also overload the varargs methods also.
+>> [!Caution]
+>>Overloading a varargs method can lead to a ambiguity also. as it's a possible to create ambiguous call to an overloaded varargs method.
+
