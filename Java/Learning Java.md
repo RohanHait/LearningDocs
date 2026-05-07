@@ -446,3 +446,56 @@ In legacy code we used array as a arguments to passed variable length arguments.
 > [!Caution]
 >Overloading a varargs method can lead to a ambiguity also. as it's a possible to create ambiguous call to an overloaded varargs method.
 
+
+## Package
+A package in Java is a mechanism to encapsulate a group of related classes, interfaces, and sub-packages. Packag help in organizing the code, s*preventing naming conflicts*", and providing controlled access to classes and
+interfaces.
+### Class Importation
+Class Importation is used to access the public classes of another package there is two ways we can use public classes of another packages
+⁃ Using fully qualified name: `iava.time.LocalDate today = java.time.LocalDate.now()" Using `import' of the file(but below statement).
+keyword at the top
+-
+source
+any package
+You can import all the classes of a package . or you can import only a specific
+Example:
+Class form a package.
+‣* Java
+import java.time.*; // Import all the classes of java time package import /* NOTE:
+java.util.ArrayList; // Import only the Arraylist
+You Can only use * notation to import single packages
+I
+You
+can't import all packages with java prefix
+// import java.* INALID!!
+// import java.*. *
+INVALID!!
+*/
+Suppose you write a program that imports both packages.
+java
+import java.util.*;
+import java.sql.*;
+If you now use the Date class, you get a compile-time error:
+java Date
+today; // ERROR--java.util.Date or java.sql.Date?
+The compiler cannot figure out which Date class you want. You can solve this problem by adding a specific impor
+statement:
+import java.util. *
+import java.sql.*;
+import java.util.Date;
+### Static Imports
+A form of the `import` statement permits the importing of static methods and fields, not iust classes
+# Inheritance
+Inheritance in Java is an Object-riented Programming (OOP) feature that allows one class (subclass/child) to acquire the properties and behaviors of another class.
+# Class , Subclass, Superclass
+### Defining Subclass
+E
+java
+Syntex: <acces-modifier> class <subclassname> extends <superclassname> public class Manager extends Employeet
+private double bonus
+public void setBonus(double bonus) (
+this.bonus = bonus:
+تب
+In OOPs The class that inherits a class called subclass, and other class is called superclass. In Java we use `extends` keywords to inherit the class.
+All the proparties of super class is present in subclass and we can also add extra fields and/or methods to the
+subclass.
