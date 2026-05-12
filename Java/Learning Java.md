@@ -102,7 +102,8 @@ if(Double.isNan(x)) // check whether x is "not a number"
 If The Type Conversion is incompatible then we need to explicitly type conversion. 
 	(target type) value
 	Ex: int a= 300; byte b ; b = (byte) a ;
-> Note : In Explicit type casting they will convert the value different way for different things 
+> [!Note] 
+> In Explicit type casting they will convert the value different way for different things 
 > Like for 
 > 1. Big size Integer to small size integer it will  reduce by modulo operation 
 > 2. For floating-point to integer  first it will convert to nearest small integer (**ceil**) then it will reduce module to the target type range .
@@ -1059,3 +1060,327 @@ common *functional interface* :
 | `Binary0perator<T>`  | `T`, `T`        | `T`          | `apply`              | A binary operator on the type T                  | `andThen`, `maxBy`, `minBy`             |
 | `Predicate<T>`       | `T`             | `boolean`    | `test`               | A boolean-valued function                        | `and`, `or`, `negate`, `isEqual`, `not` |
 | `BiPredicate<T,U>`   | `T`, `U`        | `boolean`    | `test`               | A boolean-valued function with two arguments     | `and`, `or`, `negate`                   |
+# Exceptions
+## Dealing with Errors
+Suppose an error occurs while a Java program is running. Users expect that programs will act sensibly when errors happen. If an operation cannot be completed because of an error, the program ought to either
+- Return to a safe state and enable the user to execute other commands or 
+- Allow the user to save all work and terminate the programme gracefully 
+#### Sort of problems we need to consider 
+- ***User Input Errors:*** Some user like to blaze their own trail instead of following directions. Suppose a user asks to connect to a URL that is syntactically wrong. Your code should check the syntex, but suppose it does not. Then the network layer will complain.
+- ***Device Errors***: Hardware does not always do what you want it to. A printer may be turned off or maybe out of paper during printing.
+- ***Physical Limitations***: Disks can fill up, or you can run out of available memory.
+- ***Code Errors***: A Method may not perform correctly. For example it could deliver wrong answers or use methods incorrectly.
+### The Classification of  Exceptions
+```mermaid
+graph BT
+	A[Throwable]
+	B[Error]
+	C[Exception]
+	D[IOException]
+	E[RuntimeException]
+	E ---> C ---> A
+	D ----> C 
+	B ----> A
+```
+Notice that all exceptions descend from `Throwable`, but the hierarchy immediately splits into two branches: `Error` and `Exception`.
+
+The `Error` hierarchy describes internal errors and resource exhaustion situations inside the Java runtime system. You should not throw an object of this type.
+
+When doing Java programming, focus on the `Exception` hierarchy. The `Exception` hierarchy split into two parts `RuntimeException` and `IOException`
+1. `RuntimeException` (Unchecked Exception) include such problems
+	- A bad cast
+	- An out-of-boundary array access 
+	- A null pointer access
+2. `IOException` (Checked Exception) include 
+	- Trying to read past the end of a file
+	- Trying to open a file that doesn't exist
+	- Trying to find a Class Object for a string that does not denote an existing class
+### Declaring Checked Exceptions
+A Java method can throw an exception if it encounters a situation it cannot handle. The idea is simple: ***A method will not only tell the Java compiler what values it can return, it is also going to tell the compiler what can go wrong.***
+The place in which you advertise that your method can throw an exception is the header of the method; the header changes to reflect the checked exceptions the method can throw. for example
+```java
+public FileInputStream(String name) throws FileNotFoundException
+// The decaration says that this constructor produces a FileInputStream object froma string parameter but it also can go wrong  in a special way by throwing a FileNotFoundException
+```
+
+keep in mind that an exception is thrown in any of the following four situations:
+- You call a method that throws a checked exception—for example, the `FileInputStream` constructor. 
+- You detect an error and throw a checked exception with the `throw` statement (the `throw` statement is covered in the next section). 
+- You make a programming error, such as `a[-1] = 0 t`hat gives rise to an unchecked exception (in this case, an `ArrayIndexOutOfBoundsException`).
+- An internal error occurs in the virtual machine or runtime library
+If either of the first two scenarios occurs, you must tell the programmers who will use your method about the possibility of an exception.
+
+If a method might throw more then one checked exception type you must list all exception classes in the header separate by commas.
+```java
+class MyAnimation{
+...
+public Image loadImage(String s) throws 
+FileNotFoundException, EOFException
+{
+	....
+}
+}
+```
+
+>[!Caution]
+>If you override a method from a superclass, the checked exceptions that the subclass method declares c***annot be more general ***than those of the superclass method. (It is OK to ***throw more specific exceptions,*** or ***not to throw any exceptions in the subclass method***.) In particular, if the superclass method throws no checked exception at all, neither can the subclass. For example, if you override `JComponent.paintComponent`, your `paintComponent` method must not throw any checked exceptions, because the superclass method doesn’t throw any.
+
+### How to Throw an Exception
+If something abnormal occurred and decided to throw an exception by creating a new exception and throw it 
+```java
+/*
+throw new <ExceptionClassName>();
+or 
+var e = new <ExceptionClassname>();
+throw e ;
+**/
+throw new EOFEXception()
+// or
+var e = new EOFException()
+throw e
+```
+For example
+```java
+String readData(Scanner in) throws EOFException
+{
+	....
+	while(...){
+	if(!in.hasNext())// EOF encountered
+	{
+		if(n<len) throw new EOFException()
+	}
+	...
+	}
+	return s;
+}
+```
+`EOFException` constructor has a second argument that takes string argument. we can put this to good use by describing the exceptional condition more carefully.
+```java
+String gripe = "Content-length: " + len + ", Recived:"+n ;
+throw new EOFException(gripe)
+```
+As you can see, throwing an exception is easy if one of the existing exception classes works for you. In this case: 
+1. Find an appropriate exception class. 
+2. Make an object of that class. 
+3. Throw it.
+Once a method _throws_ an _exception_, it does not return to its caller. This means you do not have to worry about cooking up a default return value or an error code.
+### Creating Exception Classes
+You can create your own exception by derive it from `Exception` or from a child class of `Exception` such as `EOFException`. 
+It is customary to give both a default constructor and a constructor that contains a detailed message.
+```java
+class FileFormatException extends IOException
+{
+	public FileFormatException(){}
+	public FileFormatException(String gripe){
+		super(gripe)
+	}
+}
+```
+
+## Catching Exceptions
+If an exception occurs that is not caught anywhere, the program will terminate and print a message to the console, giving the type of the exception and a stack trace. However, GUI programs may catch exceptions, print stack trace messages, and then go back to the user interface processing loop.
+
+to catch an exception, set up a `try/catch` block. the simplest form of the `try/catch` block as follows
+```
+try{
+	code
+	more code
+	more code
+}
+catch(ExceptionType e)
+{
+	handle for this type
+}
+```
+if any code inside `try` block throws an exception of the class specified in the `catch` clause, then
+1. The program skips the remainder of the code in the `try` block.
+2. The program executes the handler code inside the `catch` clause.
+If none of the code inside the `try` block throws an exception, then the program skips the catch clause.
+for example
+```java
+public void read(String filename) 
+{    
+	try    
+	{       
+		var in = new FileInputStream(filename);
+		int b;       
+		while ((b = in.read()) != -1)
+		{
+			process input       
+		}    
+	}    
+	catch (IOException exception)    
+	{       
+		exception.printStackTrace();    
+	} 
+}
+```
+
+Often, the best choice is to do nothing at all and simply pass the exception on to the caller. If an error occurs in the read method, let the caller of the read method worry about it! If we take that approach, then we have to advertise the fact that the method may throw an `IOException`.
+```java
+public void read(String filename) throws IOException
+{
+	var in = new FileInputStream(filename);    
+	int b;    
+	while ((b = in.read()) != -1)
+	{
+		processs input
+	}
+}
+```
+### Catching Multiple Exceptions
+We can catch multiple exception types in a `try` block and handle each type differently Example :
+```java
+try{
+	code that might throw errors
+}catch(FileNotFoundException e){
+	emergency action for missing file
+}catch(UnknownHostException e){
+	emegency action for unknown hosts
+}catch(IOException e){
+	emergency action for all other I/O problems
+}
+```
+As of Java 7, you can catch multiple exception types in the same catch clause. For example, suppose that the action for missing files and unknown hosts is the same. Then you can combine the catch clauses:
+```
+try{
+	code that might throw errors
+}catch(FileNotFoundException | UnknownHostException e){
+	emergency action for missing file and unknown hosts
+}catch(IOException e){
+	emergency action for all other I/O problems
+}
+```
+This feature is only needed when catching exception types that are not subclasses of one another. 
+>[!Note]
+>When we catch multiple exceptions the exception variable is implicitly `final`. For example we can't assign a different value to `e` in the body of the clause.
+
+### Rethrowing and Chaining Exceptions
+We can throw an exception in a `catch` clause also.  we mainly do it for 
+- Changing the Exception type
+- logging the error
+
+### The `finally` Clause
+When an exception occur in try block it stop executing the rest of the code and execute the catch block and exit. This is a problem if the method acquired some local resource ,which is only this method knows about, and that resource must have cleaned up.
+one solution is use cleanup in both block. other is `finally` clause. The code in the finally block runs whether or not exception was caught. for example
+```java
+var in = new FileInputStream(...);
+try{
+ code that might throw exception
+}catch(IOException e){
+	handle the exception
+}finally {
+	// 
+	in.close();
+}
+```
+
+We can use the finally clause without a catch clause. For example, consider the following try statement:
+```
+InputStream in =... ;
+try{
+	code that might throw an error;
+}finally{
+	in.close()
+}
+```
+>[!Caution]
+>A `finally` clause can yield unexpected results when it contains return statements. Suppose you exit the middle of a try block with a return statement. Before the method returns, the finally block is executed. If the finally block also contains a return statement, then it masks the original return value. Consider this example:
+>```
+>public static int parseInt(String s){
+>	try{
+>		return Integer.parseInt(s);
+>	}finally{
+>	return 0;
+>	}
+>}
+>```
+>It looks as if in the call `parseInt("42")` the body of try block return 42. however finally clause executed before the actual return and causes the method to return 0 .
+>And it gets worse. Consider the call `parseInt("zero").` The `Integer.parseInt `method throws a `NumberFormatException`. Then the finally clause is executed, and the return statement swallows the exception!
+>
+>The body of the finally clause is intended for cleaning up resources. Don’t put statements that change the control flow (return, throw, break, continue) inside a finally clause.
+
+### Tips for using Exceptions
+1. ***Exception handling is not supposed to replace a simple test.*** 
+	As an example of this hare's code that tries 10,000,000 times to pop an empty stack. first it use simple `isEmpty` method
+	```
+	if(!s.empty()) s.pop();
+	```
+	Next, we force it to pop the stack no matter what and catch the `EmptyStackException` that tells we should not have done that
+	```
+	try {
+		s.pop()
+	}catch(EmptyStackException e){
+	}
+	```
+	in this case first one run very fast then second one.
+	
+2. ***Do not micromanage exceptions.***
+	```java
+	// DO NOT USE THIS 
+	PrintStream out;
+	Stack s ;
+	for(int i = 0 ; i < 100 ; i++){
+		try{
+			n = s.pop()
+		}catch(EmptyStackException e){
+		
+		}
+		try{
+			out.writeInt(n);
+		}catch(IOException e){
+		
+		}
+	}
+	```
+	
+	```java 
+	// Insted Use this
+	PrintStream out;
+	Stack s ;
+	try{
+		for(int i = 0 ; i < 100 ; i++){
+			n = s.pop()
+			out.writeInt(n);
+		}
+	}
+	catch(EmptyStackException e){
+	}
+	catch(IOException e){
+		
+	}
+	```
+3. ***Make good use of the exception hierarchy.***
+	Don’t just throw a `RuntimeException`. Find an appropriate subclass or create your own. 
+	Don’t just catch `Throwable`. It makes your code hard to read and maintain.
+	Do not hesitate to turn an exception into another exception that is more appropriate.
+	Respect the difference between checked and unchecked exceptions. Checked exceptions are inherently burdensome don’t throw them for logic errors. 
+	
+4. ***Do not squelch exceptions.***
+	In Java, there is a tremendous temptation to shut up exceptions. If you’re writing a method that calls a method that might throw an exception once a century, the compiler whines because you have not declared the exception in the throws list of your method. You do not want to put it in the throws list because then the compiler will whine about all the methods that call your method. So you just shut it up:
+	```
+	public Image loadImage(String s){
+		try{
+			code that throw checked exceptions
+		}catch(Exception e){} //so there
+	}
+	```
+	Now your code will compile without a hitch. It will run fine, except when an exception occurs it will simply be ignored. you can also make some effort to handle it.
+	
+5. ***When you detect an error, “tough love” works better than indulgence.***
+	Its best to throw an error then returning a dummy value
+	
+6. ***Propagating exceptions is not a sign of shame.***
+	In many case , it is actually better to propagate the exception instead of catching it.
+	```java
+	public void readStuff(String filename) throws IOException
+	{
+		var in = new FileInputStream(filename,StandardCharsets.UTF_8)
+		....
+	}
+	```
+	Higher-level methods are often better equipped to inform the user of errors or to abandon unsuccessful command.
+	
+7. ***Use standard methods for reporting null-pointer and out-of-bounds exceptions.***
+8. ***Don’t show stack traces to end users.***
+
